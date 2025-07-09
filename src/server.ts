@@ -1,57 +1,41 @@
 import fastify from "fastify";
+import cors from "@fastify/cors";
+
+import { teamsRepository, driversRepository } from "./repositories/teams-repository";
+import { IRouteParams } from "./utils/router-params";
 
 const server = fastify({
   logger: true,
 });
-
-interface ITeam {
-  id: number;
-  name: string;
-  base: string;
-};
-
-interface IDriver {
-  id: number;
-  name: string;
-  teamId: number;
-}
-
-const teams: ITeam[] = [
-  { id: 1, name: "McLaren", base: "Woking United Kingdom" },
-  { id: 2, name: "Mercedes", base: "Bracley, United Kingdim" },
-  { id: 3, name: "Ferrari", base: "Italia"}
-];
-
-const drivers: IDriver[] = [
-  { id: 1, name: "Rubinho Barriquelo", teamId: 1 },
-  { id: 2, name: "Max Verstappen", teamId: 2 },
-];
+server.register(cors, {
+  origin: "*",
+});
 
 server.get("/api/teams", async (request, response) => {
   response.type("application/json").code(200);
 
-  return { teams };
+  const content = await teamsRepository();
+  response.send(content);
 });
 
 server.get("/api/drivers", async (request, response) => {
   response.type("application/json").code(200);
 
-  return { drivers };
-});
+  const content = await driversRepository();
 
-interface IRouteParams {
-  id: string;
-}
+  response.send(content);
+});
 
 server.get<{Params: IRouteParams}>("/api/driver/:id", async (request, response) => {
   response.type("application/json").code(200);
 
   const id = parseInt(request.params.id);
-  const driver = drivers.find(d => d.id === id);
+  const content = await driversRepository(id);
+  console.log(content)
 
-  if (driver == undefined)
+  if (content == undefined)
     response.type("application/json").code(404);
-  return { driver };
+  response.send(content);
 });
 
 server.listen({
