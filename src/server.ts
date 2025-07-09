@@ -1,7 +1,7 @@
 import fastify from "fastify";
 
 const server = fastify({
-  logger: false,
+  logger: true,
 });
 
 interface ITeam {
