@@ -5,3 +5,7 @@ contentType: application/json
 GET http://localhost:3333/api/drivers HTTP/1.1
 Content-Type: application/application/json
 ###
+
+GET http://localhost:3333/api/driver/1 HTTP/1.1
+Content-Type: application/application/json
+###
